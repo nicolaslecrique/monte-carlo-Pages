@@ -1,0 +1,8 @@
+Monte-Carlo/Debug/
+Monte-Carlo/Monte-Carlo/Debug/
+*.o
+Monte-Carlo/Monte-Carlo/monte-carlo-gcc.exe
+*.user
+*.suo
+*.opensdf
+*.sdf
