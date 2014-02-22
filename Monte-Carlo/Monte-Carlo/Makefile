@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -W -Wall -std=c++11 -I E:\devs\libs\boost\boost_1_55_0
+CFLAGS= -W -Wall -std=c++11 -I $(BOOST)
 LDFLAGS=
 EXEC=monte-carlo-gcc.exe
 SRC= $(wildcard *.cpp)
