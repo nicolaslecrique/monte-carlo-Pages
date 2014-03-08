@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Cdo.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mt19937.cpp" />
@@ -77,6 +78,7 @@
     <Text Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asset.h" />
     <ClInclude Include="Cdo.h" />
     <ClInclude Include="mt19937.h" />
     <ClInclude Include="var_alea.h" />
