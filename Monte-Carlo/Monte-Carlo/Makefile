@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -W -Wall -std=c++11 -I $(BOOST)
+CFLAGS= -std=c++11 -I $(BOOST)
 LDFLAGS=
 EXEC=monte-carlo-gcc.exe
 SRC= $(wildcard *.cpp)

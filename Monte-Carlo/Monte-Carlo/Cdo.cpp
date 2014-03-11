@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <functional>
 
-Cdo::Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates)
-: _k1(k1), _k2(k2), _spreadPaimentDates(spreadPaimentDates)
+Cdo::Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates, const std::vector<Asset>& assets)
+: _k1(k1), _k2(k2), _spreadPaimentDates(spreadPaimentDates), _assets(assets)
 {
 	assert(k1 >=0 && k1 <= 1);
 	assert(k2 >= 0 && k2 <= 1);
