@@ -15,10 +15,6 @@ public:
 	Asset(double coeffM, const std::vector<double>& defaultProba) :
 		_coeffM(coeffM), _coeffX(sqrt(1 - pow(coeffM, 2)))
 	{
-		//for each (double proba in defaultProba)//TODO mauvaise syntax foreach
-		//{
-			//_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));
-		//}
 		for (auto proba : defaultProba)
 		{
 			_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));

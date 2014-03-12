@@ -16,6 +16,11 @@ public:
 	Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates, const std::vector<Asset>& assets);
 	~Cdo();
 
+	const std::vector<Asset>& getAssets()
+	{
+		return _assets;
+	}
+
 	double computeSpread(const std::vector<double>& expectedLosses, double rate) const;
 	double computeLoss(double loss) const;
 };

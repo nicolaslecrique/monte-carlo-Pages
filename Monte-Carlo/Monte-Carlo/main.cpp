@@ -40,10 +40,22 @@ int main()
 
 	Cdo myCdo(0.1, 0.3, spreadPaimentDates, assets);
 
-	gaussian gaussianGenerator;
-	double generated = gaussianGenerator();
+	gaussian gaussianGen;
 
+	//TODO sound strange time is not used, check with Lemaire M(t) X(t) : MB, N(0,1), N(0,t) ?
+	int iDate = 0;
 	
+	for (auto date : spreadPaimentDates)
+	{
+		for (auto asset : myCdo.getAssets())
+		{
+			double x = gaussianGen();
+			double m = gaussianGen();
+			asset.hasDefaulted(x, m, iDate);
+		}
+		iDate++;
+	}
+	//myCdo.computeLoss
 
 	double spread = 0;// myCdo.computeSpread(/*TODO*/, 0.02);
 
