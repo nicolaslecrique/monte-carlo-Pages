@@ -60,7 +60,7 @@ int main()
 	double spread = 0;// myCdo.computeSpread(/*TODO*/, 0.02);
 
 
-	cout << "spread" << spread << "nig " << generated << endl;
+	cout << "spread" << spread << "nig " << endl;
 	char pause;
 	cin >> pause;
 	return 0;
