@@ -23,44 +23,51 @@ int main()
 	//normal_inverse_gaussian normal_inverse_gaussian(alpha, beta,
 	//	mu, delta);
 
-
+	int nbAssets = 10;
+	double rate = 0.01;
 	std::vector<double> spreadPaimentDates{ 0.5, 1, 1.5, 2, 2.5, 3 };
 
 	std::vector<Asset> assets;
-	for (int iAsset = 0; iAsset < 10; iAsset++)
+	for (int iAsset = 0; iAsset < nbAssets; iAsset++)
 	{
 		std::vector<double> defaultProbas;
 		for (int iDate = 0; iDate < (int)spreadPaimentDates.size(); iDate++)
 		{
-			defaultProbas.push_back(iDate*0.001);
+			defaultProbas.push_back(iDate*0.1);
 		}
-		Asset asset(iAsset*0.05, defaultProbas);
+		Asset asset(iAsset*0.05, ((double)1)/nbAssets, defaultProbas);
 		assets.push_back(asset);
 	}
 
-	Cdo myCdo(0.1, 0.3, spreadPaimentDates, assets);
+	Cdo myCdo(0.99, 1, spreadPaimentDates, assets);
 
 	gaussian gaussianGen;
 
 	//TODO sound strange time is not used, check with Lemaire M(t) X(t) : MB, N(0,1), N(0,t) ?
 	int iDate = 0;
-	
+	std::vector<bool> hasDefaulted(myCdo.getAssets().size(),false);
+	std::vector<double> lossInCDOByDate(myCdo.getSpreadPaimentDates());
+	double defaultedPortion = 0;
 	for (auto date : spreadPaimentDates)
-	{
+	{	
+		int iAsset = 0;
 		for (auto asset : myCdo.getAssets())
 		{
-			double x = gaussianGen();
-			double m = gaussianGen();
-			asset.hasDefaulted(x, m, iDate);
+			if (!hasDefaulted[iAsset])
+			{
+				double x = gaussianGen();
+				double m = gaussianGen();
+				hasDefaulted[iAsset] = asset.hasDefaulted(x, m, iDate);
+				defaultedPortion += asset.getWeight();
+			}
+			iAsset;
 		}
+		lossInCDOByDate[iDate] = myCdo.computeLossInCdo(defaultedPortion);
 		iDate++;
 	}
-	//myCdo.computeLoss
+	double spread = myCdo.computeSpread(lossInCDOByDate, rate);
 
-	double spread = 0;// myCdo.computeSpread(/*TODO*/, 0.02);
-
-
-	cout << "spread" << spread << "nig " << endl;
+	cout << "spread: " << spread << endl;
 	char pause;
 	cin >> pause;
 	return 0;

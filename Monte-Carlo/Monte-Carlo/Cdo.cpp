@@ -41,7 +41,7 @@ double Cdo::computeSpread(const std::vector<double>& expectedLosses, double rate
 }
 
 
-double Cdo::computeLoss(double loss) const
+double Cdo::computeLossInCdo(double lossInAllAssets) const
 {
-	return std::max(std::min(loss, _k2)-_k1,0.)/(_k2-_k1);
+	return std::max(std::min(lossInAllAssets, _k2) - _k1, 0.) / (_k2 - _k1);
 }

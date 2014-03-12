@@ -21,6 +21,11 @@ public:
 		return _assets;
 	}
 
+	const std::vector<double>& getSpreadPaimentDates()
+	{
+		return _spreadPaimentDates;
+	}
+
 	double computeSpread(const std::vector<double>& expectedLosses, double rate) const;
-	double computeLoss(double loss) const;
+	double computeLossInCdo(double lossInAllAssets) const;
 };
