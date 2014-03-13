@@ -22,7 +22,7 @@ public:
 			if (proba > 0){
 				_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));
 			} else {
-				_defaultQuantiles.push_back(std::numeric_limits<double>::max());
+				_defaultQuantiles.push_back(std::numeric_limits<double>::lowest());
 			}
 		}
 	}

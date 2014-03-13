@@ -8,7 +8,7 @@ Cdo::Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates, co
 {
 	assert(k1 >=0 && k1 <= 1);
 	assert(k2 >= 0 && k2 <= 1);
-	std::is_sorted(spreadPaimentDates.begin(), spreadPaimentDates.end());
+	assert(std::is_sorted(spreadPaimentDates.begin(), spreadPaimentDates.end()));
 
 }
 
@@ -20,6 +20,7 @@ Cdo::~Cdo()
 double Cdo::computeSpread(const std::vector<double>& expectedLosses, double rate) const
 {
 	assert(expectedLosses.size() == _spreadPaimentDates.size());
+	assert(std::is_sorted(expectedLosses.begin(), expectedLosses.end()));
 
 	auto first = expectedLosses.begin();
 	auto end = expectedLosses.end();

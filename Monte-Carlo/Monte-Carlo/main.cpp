@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Cdo.h"
 #include "Asset.h"
 #include "var_alea.h"
@@ -8,6 +9,9 @@ using namespace std;
 
 int main()
 {
+	//TODO debugg pour piger pourquoi j'ai tout le temps zero
+
+
 	/*
 	boost::shared_ptr<Cdo> toto();
 	cout << "Hello World!" << endl;   cout << "Welcome to C++ Programming" << endl;
@@ -23,23 +27,25 @@ int main()
 	//normal_inverse_gaussian normal_inverse_gaussian(alpha, beta,
 	//	mu, delta);
 
-	int nbAssets = 10;
+	int nbAssets = 125;
 	double rate = 0.01;
+	double K1 = 0, K2 = 0.1;
+	double lambda = 0.05;//default intensity
 	std::vector<double> spreadPaimentDates{ 0.5, 1, 1.5, 2, 2.5, 3 };
 
 	std::vector<Asset> assets;
 	for (int iAsset = 0; iAsset < nbAssets; iAsset++)
 	{
 		std::vector<double> defaultProbas;
-		for (int iDate = 0; iDate < (int)spreadPaimentDates.size(); iDate++)
+		for (auto date : spreadPaimentDates)
 		{
-			defaultProbas.push_back(iDate*0.1);
+			defaultProbas.push_back(1-exp(-lambda*date));
 		}
-		Asset asset(iAsset*0.05, ((double)1)/nbAssets, defaultProbas);
+		Asset asset(0.3, ((double)1)/nbAssets, defaultProbas);
 		assets.push_back(asset);
 	}
 
-	Cdo myCdo(0.99, 1, spreadPaimentDates, assets);
+	Cdo myCdo(K1, K2, spreadPaimentDates, assets);
 
 	gaussian gaussianGen;
 
@@ -57,8 +63,11 @@ int main()
 			{
 				double x = gaussianGen();
 				double m = gaussianGen();
-				hasDefaulted[iAsset] = asset.hasDefaulted(x, m, iDate);
-				defaultedPortion += asset.getWeight();
+				if (asset.hasDefaulted(x, m, iDate))
+				{
+					hasDefaulted[iAsset] = true;
+					defaultedPortion += asset.getWeight();
+				}
 			}
 			iAsset;
 		}
