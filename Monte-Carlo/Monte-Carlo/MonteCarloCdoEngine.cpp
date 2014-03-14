@@ -14,8 +14,6 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 {
 	gaussian gaussianGen;
 
-	//TODO sound strange time is not used, check with Lemaire M(t) X(t) : MB, N(0,1), N(0,t) ?
-
 	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates());
 	for (int iIter = 0; iIter < nbSimulations; iIter++)
 	{
@@ -27,7 +25,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 		for (auto date : cdo.getSpreadPaimentDates())
 		{
 			int iAsset = 0;
-			for (auto asset : cdo.getAssets())
+			for (const Asset& asset : cdo.getAssets())
 			{
 				if (!hasDefaulted[iAsset])
 				{

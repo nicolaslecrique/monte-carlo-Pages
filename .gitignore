@@ -6,3 +6,5 @@ Monte-Carlo/Monte-Carlo/monte-carlo-gcc.exe
 *.suo
 *.opensdf
 *.sdf
+*.psess
+*.vsp

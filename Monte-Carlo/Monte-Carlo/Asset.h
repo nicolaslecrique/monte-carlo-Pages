@@ -30,7 +30,7 @@ public:
 		}
 	}
 
-	bool hasDefaulted(double X,double M, int date)
+	bool hasDefaulted(double X,double M, int date) const
 	{
 		return _coeffX*X + _coeffM*M < _defaultQuantiles[date];
 	}
