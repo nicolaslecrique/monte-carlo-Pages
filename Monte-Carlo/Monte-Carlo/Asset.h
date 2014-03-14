@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <boost/math/distributions/normal.hpp>
+#include <assert.h>
 #include <limits>
 
 class Asset
@@ -17,6 +18,8 @@ public:
 	Asset(double coeffM, double weight, const std::vector<double>& defaultProba) :
 		_coeffM(coeffM), _weight(weight), _coeffX(sqrt(1 - pow(coeffM, 2)))
 	{
+		assert(std::is_sorted(defaultProba.begin(), defaultProba.end()));
+
 		for (auto proba : defaultProba)
 		{
 			if (proba > 0){

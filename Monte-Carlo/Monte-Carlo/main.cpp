@@ -50,30 +50,41 @@ int main()
 	gaussian gaussianGen;
 
 	//TODO sound strange time is not used, check with Lemaire M(t) X(t) : MB, N(0,1), N(0,t) ?
-	int iDate = 0;
-	std::vector<bool> hasDefaulted(myCdo.getAssets().size(),false);
+
+	int iterations = 100;
 	std::vector<double> lossInCDOByDate(myCdo.getSpreadPaimentDates());
-	double defaultedPortion = 0;
-	for (auto date : spreadPaimentDates)
-	{	
-		int iAsset = 0;
-		for (auto asset : myCdo.getAssets())
+	for (int iIter = 0; iIter < iterations; iIter++)
+	{
+
+		int iDate = 0;
+		std::vector<bool> hasDefaulted(myCdo.getAssets().size(), false);
+
+		double defaultedPortion = 0;
+		for (auto date : spreadPaimentDates)
 		{
-			if (!hasDefaulted[iAsset])
+			int iAsset = 0;
+			for (auto asset : myCdo.getAssets())
 			{
-				double x = gaussianGen();
-				double m = gaussianGen();
-				if (asset.hasDefaulted(x, m, iDate))
+				if (!hasDefaulted[iAsset])
 				{
-					hasDefaulted[iAsset] = true;
-					defaultedPortion += asset.getWeight();
+					double x = gaussianGen();
+					double m = gaussianGen();
+					if (asset.hasDefaulted(x, m, iDate))
+					{
+						hasDefaulted[iAsset] = true;
+						defaultedPortion += asset.getWeight();
+					}
 				}
+				iAsset;
 			}
-			iAsset;
+			lossInCDOByDate[iDate] += myCdo.computeLossInCdo(defaultedPortion);
+			iDate++;
 		}
-		lossInCDOByDate[iDate] = myCdo.computeLossInCdo(defaultedPortion);
-		iDate++;
+
 	}
+	std::transform(lossInCDOByDate.begin(), lossInCDOByDate.end(), lossInCDOByDate.begin(),
+		std::bind1st(std::multiplies<double>(), ((double)1)/iterations));
+
 	double spread = myCdo.computeSpread(lossInCDOByDate, rate);
 
 	cout << "spread: " << spread << endl;

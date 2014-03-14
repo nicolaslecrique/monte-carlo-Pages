@@ -6,9 +6,17 @@
 Cdo::Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates, const std::vector<Asset>& assets)
 : _k1(k1), _k2(k2), _spreadPaimentDates(spreadPaimentDates), _assets(assets)
 {
-	assert(k1 >=0 && k1 <= 1);
-	assert(k2 >= 0 && k2 <= 1);
+	assert(k1 >=0);
+	assert(k2 <= 1);
+	assert(k2 > k1);
 	assert(std::is_sorted(spreadPaimentDates.begin(), spreadPaimentDates.end()));
+	double totalweight=0;
+	for(auto asset : assets)
+	{
+		totalweight += asset.getWeight();
+	}
+	assert(totalweight >= 0.999);
+	assert(totalweight <= 1.001);
 
 }
 
