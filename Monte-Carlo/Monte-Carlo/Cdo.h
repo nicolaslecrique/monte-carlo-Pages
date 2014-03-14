@@ -16,12 +16,12 @@ public:
 	Cdo(double k1, double k2, const std::vector<double>& spreadPaimentDates, const std::vector<Asset>& assets);
 	~Cdo();
 
-	const std::vector<Asset>& getAssets()
+	const std::vector<Asset>& getAssets() const
 	{
 		return _assets;
 	}
 
-	const std::vector<double>& getSpreadPaimentDates()
+	const std::vector<double>& getSpreadPaimentDates() const
 	{
 		return _spreadPaimentDates;
 	}

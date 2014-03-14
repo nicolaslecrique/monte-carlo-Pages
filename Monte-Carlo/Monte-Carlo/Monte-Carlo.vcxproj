@@ -71,6 +71,8 @@
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Cdo.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MonteCarloCdoEngine.cpp" />
+    <ClCompile Include="MonteCarloResult.cpp" />
     <ClCompile Include="mt19937.cpp" />
     <ClCompile Include="var_alea.cpp" />
   </ItemGroup>
@@ -80,6 +82,8 @@
   <ItemGroup>
     <ClInclude Include="Asset.h" />
     <ClInclude Include="Cdo.h" />
+    <ClInclude Include="MonteCarloCdoEngine.h" />
+    <ClInclude Include="MonteCarloResult.h" />
     <ClInclude Include="mt19937.h" />
     <ClInclude Include="var_alea.h" />
   </ItemGroup>

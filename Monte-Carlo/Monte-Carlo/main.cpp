@@ -2,30 +2,16 @@
 #include <cmath>
 #include "Cdo.h"
 #include "Asset.h"
+#include "MonteCarloCdoEngine.h"
 #include "var_alea.h"
-#include <boost/shared_ptr.hpp>
+
 using namespace std;
 
 
 int main()
 {
-	//TODO debugg pour piger pourquoi j'ai tout le temps zero
-
-
-	/*
-	boost::shared_ptr<Cdo> toto();
-	cout << "Hello World!" << endl;   cout << "Welcome to C++ Programming" << endl;
-	char pause;
-	cin >> pause;
-	*/
 
 	init_alea();
-	//double alpha = 1;
-	//double beta = 1;
-	//double mu = 1;
-	//double delta = 1;
-	//normal_inverse_gaussian normal_inverse_gaussian(alpha, beta,
-	//	mu, delta);
 
 	int nbAssets = 125;
 	double rate = 0.01;
@@ -46,48 +32,11 @@ int main()
 	}
 
 	Cdo myCdo(K1, K2, spreadPaimentDates, assets);
+	MonteCarloCdoEngine engine;
 
-	gaussian gaussianGen;
+	auto result = engine.Price(myCdo, 1000, rate);
 
-	//TODO sound strange time is not used, check with Lemaire M(t) X(t) : MB, N(0,1), N(0,t) ?
-
-	int iterations = 100;
-	std::vector<double> lossInCDOByDate(myCdo.getSpreadPaimentDates());
-	for (int iIter = 0; iIter < iterations; iIter++)
-	{
-
-		int iDate = 0;
-		std::vector<bool> hasDefaulted(myCdo.getAssets().size(), false);
-
-		double defaultedPortion = 0;
-		for (auto date : spreadPaimentDates)
-		{
-			int iAsset = 0;
-			for (auto asset : myCdo.getAssets())
-			{
-				if (!hasDefaulted[iAsset])
-				{
-					double x = gaussianGen();
-					double m = gaussianGen();
-					if (asset.hasDefaulted(x, m, iDate))
-					{
-						hasDefaulted[iAsset] = true;
-						defaultedPortion += asset.getWeight();
-					}
-				}
-				iAsset;
-			}
-			lossInCDOByDate[iDate] += myCdo.computeLossInCdo(defaultedPortion);
-			iDate++;
-		}
-
-	}
-	std::transform(lossInCDOByDate.begin(), lossInCDOByDate.end(), lossInCDOByDate.begin(),
-		std::bind1st(std::multiplies<double>(), ((double)1)/iterations));
-
-	double spread = myCdo.computeSpread(lossInCDOByDate, rate);
-
-	cout << "spread: " << spread << endl;
+	cout << "spread: " << result.Spread << endl;
 	char pause;
 	cin >> pause;
 	return 0;
