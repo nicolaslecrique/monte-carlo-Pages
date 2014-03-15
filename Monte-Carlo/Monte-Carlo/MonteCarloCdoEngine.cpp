@@ -25,12 +25,12 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 		for (auto date : cdo.getSpreadPaimentDates())
 		{
 			int iAsset = 0;
+			double m = gaussianGen();
 			for (const Asset& asset : cdo.getAssets())
 			{
 				if (!hasDefaulted[iAsset])
 				{
 					double x = gaussianGen();
-					double m = gaussianGen();
 					if (asset.hasDefaulted(x, m, iDate))
 					{
 						hasDefaulted[iAsset] = true;
