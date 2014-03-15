@@ -14,7 +14,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 {
 	gaussian gaussianGen;
 
-	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates());
+	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	for (int iIter = 0; iIter < nbSimulations; iIter++)
 	{
 
@@ -37,7 +37,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 						defaultedPortion += asset.getWeight();
 					}
 				}
-				iAsset;
+				iAsset++;
 			}
 			lossInCDOByDate[iDate] += cdo.computeLossInCdo(defaultedPortion);
 			iDate++;

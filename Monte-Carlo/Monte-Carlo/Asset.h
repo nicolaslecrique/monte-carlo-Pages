@@ -22,10 +22,12 @@ public:
 
 		for (auto proba : defaultProba)
 		{
-			if (proba > 0){
+			if (proba > 0 && proba < 1){
 				_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));
-			} else {
+			} else if (proba == 0) {
 				_defaultQuantiles.push_back(std::numeric_limits<double>::lowest());
+			} else {
+				_defaultQuantiles.push_back(std::numeric_limits<double>::max());
 			}
 		}
 	}
