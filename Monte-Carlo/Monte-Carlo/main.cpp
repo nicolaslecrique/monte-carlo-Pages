@@ -14,6 +14,7 @@ const Cdo BuildCdo()
 	int nbAssets = 125;
 	double K1 = 0.2, K2 = 0.3;
 	double lambda = 0.01;//default intensity
+	double recoveryRate = 0.4;
 	std::vector<double> spreadPaimentDates{ 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 };
 
 	std::vector<Asset> assets;
@@ -24,7 +25,7 @@ const Cdo BuildCdo()
 		{
 			defaultProbas.push_back(1 - exp(-lambda*date));
 		}
-		Asset asset(0.5, ((double)1) / nbAssets, defaultProbas);
+		Asset asset(0.5, ((double)1) / nbAssets, recoveryRate, defaultProbas);
 		assets.push_back(asset);
 	}
 
@@ -36,7 +37,6 @@ int main()
 {
 
 	init_alea();
-
 	auto myCdo = BuildCdo();
 	double rate = 0.01;
 

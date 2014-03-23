@@ -11,14 +11,17 @@ class Asset
 	const double _coeffM;
 	const double _coeffX;
 	const double _weight;
+	const double _recoveryRate;
 	std::vector<double> _defaultQuantiles;
 
 public:
 
-	Asset(double coeffM, double weight, const std::vector<double>& defaultProba) :
-		_coeffM(coeffM), _weight(weight), _coeffX(sqrt(1 - pow(coeffM, 2)))
+	Asset(double coeffM, double weight, double recoveryRate, const std::vector<double>& defaultProba) :
+		_coeffM(coeffM), _weight(weight), _recoveryRate(recoveryRate), _coeffX(sqrt(1 - pow(coeffM, 2)))
 	{
 		assert(std::is_sorted(defaultProba.begin(), defaultProba.end()));
+		assert(_recoveryRate >= 0 && _recoveryRate <= 1);
+		assert(_coeffM >= 0 && _coeffM <= 1);
 
 		for (auto proba : defaultProba)
 		{
@@ -48,9 +51,14 @@ public:
 		return _weight;
 	}
 
-	double getQuantile(int dateIndex)
+	double getQuantile(int dateIndex) const
 	{
 		return _defaultQuantiles[dateIndex];
+	}
+
+	double getRecoveryRate() const
+	{
+		return _recoveryRate;
 	}
 
 	~Asset();

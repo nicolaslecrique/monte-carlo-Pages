@@ -34,7 +34,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(const Cdo& cdo, int nbSimulati
 					if (asset.hasDefaulted(x, m, iDate))
 					{
 						hasDefaulted[iAsset] = true;
-						defaultedPortion += asset.getWeight();
+						defaultedPortion += asset.getWeight()*(1-asset.getRecoveryRate());
 					}
 				}
 				iAsset++;
