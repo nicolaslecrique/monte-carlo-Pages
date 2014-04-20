@@ -50,7 +50,11 @@ int main()
 		double k1 = i/(double)10;
 		double k2 = (i+1)/(double)10;
 		const Cdo cdo = BuildCdo(k1,k2);
-		auto result = engine.Price(cdo, nbSimu, rate);
+
+		gaussian generatorM;
+		gaussian generatorX;
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		double spread = result.Spread;
 		k1Vect.push_back(k1);
 		spreadVect.push_back(spread);

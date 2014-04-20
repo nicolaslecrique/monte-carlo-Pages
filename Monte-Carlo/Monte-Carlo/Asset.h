@@ -28,7 +28,7 @@ public:
 		{
 			if (proba > 0 && proba < 1){
 				_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));
-				_defaultQuantiles.push_back(quantile(boost::math::inverse_gaussian(), proba));
+				//_defaultQuantiles.push_back(quantile(boost::math::inverse_gaussian(), proba));
 			} else if (proba == 0) {
 				_defaultQuantiles.push_back(std::numeric_limits<double>::lowest());
 			} else {
