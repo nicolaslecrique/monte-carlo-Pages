@@ -2,10 +2,9 @@
 
 #include <cmath>
 #include <vector>
-#include <boost/math/distributions/normal.hpp>
-#include <boost/math/distributions/inverse_gaussian.hpp>
 #include <assert.h>
 #include <limits>
+#include "Distribution.h"
 
 class Asset
 {
@@ -17,7 +16,7 @@ class Asset
 
 public:
 
-	Asset(double coeffM, double weight, double recoveryRate, const std::vector<double>& defaultProba) :
+	Asset(double coeffM, double weight, double recoveryRate, const std::vector<double>& defaultProba, const Distribution& distrib) :
 		_coeffM(coeffM), _weight(weight), _recoveryRate(recoveryRate), _coeffX(sqrt(1 - pow(coeffM, 2)))
 	{
 		assert(std::is_sorted(defaultProba.begin(), defaultProba.end()));
@@ -26,9 +25,11 @@ public:
 
 		for (auto proba : defaultProba)
 		{
+			assert (proba >= 0 && proba <= 1);
 			if (proba > 0 && proba < 1){
-				_defaultQuantiles.push_back(quantile(boost::math::normal(), proba));
-				//_defaultQuantiles.push_back(quantile(boost::math::inverse_gaussian(), proba));
+				double quantile = distrib.inverse_cumulative(proba);
+				_defaultQuantiles.push_back(quantile);
+				//
 			} else if (proba == 0) {
 				_defaultQuantiles.push_back(std::numeric_limits<double>::lowest());
 			} else {

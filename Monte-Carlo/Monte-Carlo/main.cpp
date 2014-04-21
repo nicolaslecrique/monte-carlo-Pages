@@ -4,6 +4,8 @@
 #include "Asset.h"
 #include "MonteCarloCdoEngine.h"
 #include "var_alea.h"
+#include "NIGDistribution.h"
+#include "GaussianDistribution.h"
 #include <iostream>
 #include <fstream> 
 
@@ -11,7 +13,7 @@ using namespace std;
 
 
 
-const Cdo BuildCdo(double k1, double k2)
+const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 {
 	int nbAssets = 125;
 	double lambda = 0.01;//default intensity
@@ -26,7 +28,7 @@ const Cdo BuildCdo(double k1, double k2)
 		{
 			defaultProbas.push_back(1 - exp(-lambda*date));
 		}
-		Asset asset(0.5, ((double)1) / nbAssets, recoveryRate, defaultProbas);
+		Asset asset(0.5, ((double)1) / nbAssets, recoveryRate, defaultProbas, distribA);
 		assets.push_back(asset);
 	}
 
@@ -49,7 +51,10 @@ int main()
 	{
 		double k1 = i/(double)10;
 		double k2 = (i+1)/(double)10;
-		const Cdo cdo = BuildCdo(k1,k2);
+
+		const GaussianDistribution distribA;
+
+		const Cdo cdo = BuildCdo(k1,k2, distribA);
 
 		gaussian generatorM;
 		gaussian generatorX;
@@ -67,6 +72,7 @@ int main()
   	for(int i = 0; i < k1Vect.size(); i++)
   	{
   		outputFile << k1Vect[i] << " " << spreadVect[i] << " " << cos(i) << endl;
+  		std::cout << k1Vect[i] << " " << spreadVect[i] << endl;  
   	}
   	outputFile.close();
 
