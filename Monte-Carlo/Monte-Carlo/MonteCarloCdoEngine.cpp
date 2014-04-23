@@ -1,5 +1,5 @@
 #include "MonteCarloCdoEngine.h"
-#include "var_alea.h"
+
 
 MonteCarloCdoEngine::MonteCarloCdoEngine()
 {
@@ -18,10 +18,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	for (int iIter = 0; iIter < nbSimulations; iIter++)
 	{
-
 		int iDate = 0;
-		std::vector<bool> hasDefaulted(cdo.getAssets().size(), false);
-
 		double defaultedPortion = 0;
 		for (auto date : cdo.getSpreadPaimentDates())
 		{
@@ -29,15 +26,11 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 			double m = generatorM();
 			for (const Asset& asset : cdo.getAssets())
 			{
-				if (!hasDefaulted[iAsset])
-				{
 					double x = generatorX();
 					if (asset.hasDefaulted(x, m, iDate))
 					{
-						hasDefaulted[iAsset] = true;
 						defaultedPortion += asset.getWeight()*(1-asset.getRecoveryRate());
 					}
-				}
 				iAsset++;
 			}
 			lossInCDOByDate[iDate] += cdo.computeLossInCdo(defaultedPortion);

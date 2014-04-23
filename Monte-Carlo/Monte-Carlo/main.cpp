@@ -72,7 +72,7 @@ int main()
   	for(int i = 0; i < k1Vect.size(); i++)
   	{
   		outputFile << k1Vect[i] << " " << spreadVect[i] << " " << cos(i) << endl;
-  		std::cout << k1Vect[i] << " " << spreadVect[i] << endl;  
+  		std::cout << k1Vect[i] << " " << spreadVect[i]*100 << "%" << endl;  
   	}
   	outputFile.close();
 
