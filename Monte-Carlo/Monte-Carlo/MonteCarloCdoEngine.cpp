@@ -16,6 +16,7 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 	gaussian gaussianGen;
 
 	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
+	std::vector<double> variancelossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	for (int iIter = 0; iIter < nbSimulations; iIter++)
 	{
 		int iDate = 0;
@@ -33,7 +34,9 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 					}
 				iAsset++;
 			}
-			lossInCDOByDate[iDate] += cdo.computeLossInCdo(defaultedPortion);
+			double loss = cdo.computeLossInCdo(defaultedPortion);
+			lossInCDOByDate[iDate] += loss;
+			variancelossInCDOByDate[iDate] += loss*loss;
 			iDate++;
 		}
 
@@ -41,11 +44,18 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 	std::transform(lossInCDOByDate.begin(), lossInCDOByDate.end(), lossInCDOByDate.begin(),
 		std::bind1st(std::multiplies<double>(), ((double)1) / nbSimulations));
 
+	for (int i = 0 ; i < variancelossInCDOByDate.size() ; i++)
+	{
+		variancelossInCDOByDate[i] = variancelossInCDOByDate[i]/(nbSimulations-1) - 
+		nbSimulations*lossInCDOByDate[i]*lossInCDOByDate[i]/(nbSimulations-1);
+	}
+
 	double spread = cdo.computeSpread(lossInCDOByDate, rate);
 
 	MonteCarloResult result;
-
 	result.Spread = spread;
+	result.ExpectedLossByDate = lossInCDOByDate;
+	result.VarianceLossByDate = variancelossInCDOByDate;
 
 	return result;
 }
