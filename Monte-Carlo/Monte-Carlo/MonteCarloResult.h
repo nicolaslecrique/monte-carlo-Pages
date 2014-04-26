@@ -13,6 +13,9 @@ struct MonteCarloResult
 	double VarianceNumerator;
 	double VarianceDenominator;
 
+	double MinSpread95;
+	double MaxSpread95;
+
 	MonteCarloResult();
 	~MonteCarloResult();
 };

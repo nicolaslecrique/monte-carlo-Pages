@@ -48,5 +48,19 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 		nbSimulations*ExpectedlossInCDOByDate[i]*ExpectedlossInCDOByDate[i]/(nbSimulations-1);
 	}
 
-	return cdo.computeSpreadAndAnalysis(ExpectedlossInCDOByDate, variancelossInCDOByDate, rate);
+	auto result = cdo.computeSpreadAndAnalysis(ExpectedlossInCDOByDate, variancelossInCDOByDate, rate);
+
+
+	//with a=2.5 => phi(a)=0.9876 => P(|N(0,1)|<a) > 0.975 
+	//=> give confidence interval to 0.975² = 0.95 for CDO
+	double numInterval975 = 2.5*sqrt(result.VarianceNumerator/nbSimulations);
+	double denomInterval975 = 2.5*sqrt(result.VarianceDenominator/nbSimulations);
+
+	result.MinSpread95 = 
+	(result.SpreadNumerator-numInterval975)/(result.SpreadDenominator+denomInterval975);
+
+	result.MaxSpread95 = 
+	(result.SpreadNumerator+numInterval975)/(result.SpreadDenominator-denomInterval975);
+
+	return result;
 }

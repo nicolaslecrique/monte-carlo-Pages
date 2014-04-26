@@ -38,7 +38,7 @@ const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 
 int main()
 {
-	int nbSimu = 20000;
+	int nbSimu = 5000;
 	init_alea();
 	double rate = 0.01;
 
@@ -81,6 +81,8 @@ int main()
   		<< "espDen:" << result.SpreadDenominator << ";	"
   		<< "varNum:" << result.VarianceNumerator << ";	"
   		<< "varDen:" << result.VarianceDenominator << ";	"
+  		<< "MinSpread95%" << result.MinSpread95 << ";	"
+  		<< "MaxSpread95%" << result.MaxSpread95 << ";	"
   		<< std::endl << "ExpectedLossesByDate:";
   		for (auto loss : result.ExpectedLossesByDate)
   		{
@@ -96,6 +98,7 @@ int main()
   		{
   			std::cout << discount << ";";
   		}
+  		std::cout << endl;
   	}
   	outputFile.close();
 
