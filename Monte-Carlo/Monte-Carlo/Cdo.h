@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Asset.h"
+#include "MonteCarloResult.h"
 
 class Cdo
 {
@@ -26,6 +27,6 @@ public:
 		return _spreadPaimentDates;
 	}
 
-	double computeSpread(const std::vector<double>& expectedLosses, double rate) const;
+	MonteCarloResult computeSpreadAndAnalysis(const std::vector<double>& expectedLosses, const std::vector<double>& varianceLosses, double rate) const;
 	double computeLossInCdo(double lossInAllAssets) const;
 };

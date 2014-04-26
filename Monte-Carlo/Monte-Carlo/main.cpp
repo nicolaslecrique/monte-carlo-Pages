@@ -16,8 +16,8 @@ using namespace std;
 const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 {
 	int nbAssets = 125;
-	double lambda = 0.01;//default intensity
-	double recoveryRate = 0.4;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0;
 	std::vector<double> spreadPaimentDates{ 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 };
 
 	std::vector<Asset> assets;
@@ -38,7 +38,7 @@ const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 
 int main()
 {
-	int nbSimu = 1000;
+	int nbSimu = 20000;
 	init_alea();
 	double rate = 0.01;
 
@@ -46,8 +46,8 @@ int main()
 
 
 	std::vector<double> k1Vect;
-	std::vector<double> spreadVect;
-	for (int i = 0; i < 10; i++)
+	std::vector<MonteCarloResult> resultVect;
+	for (int i = 1; i < 2; i++)
 	{
 		double k1 = i/(double)10;
 		double k2 = (i+1)/(double)10;
@@ -60,9 +60,8 @@ int main()
 		gaussian generatorX;
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
-		double spread = result.Spread;
 		k1Vect.push_back(k1);
-		spreadVect.push_back(spread);
+		resultVect.push_back(result);
 	}
 
 
@@ -71,8 +70,32 @@ int main()
   	outputFile << "#k1 spread dummy" << endl;
   	for(int i = 0; i < k1Vect.size(); i++)
   	{
-  		outputFile << k1Vect[i] << " " << spreadVect[i] << " " << cos(i) << endl;
-  		std::cout << k1Vect[i] << " " << spreadVect[i]*100 << "%" << endl;  
+
+  		auto result = resultVect[i];
+
+  		outputFile << k1Vect[i] << " " << resultVect[i].Spread << " " << cos(i) << endl;
+  		std::cout 
+  		<< "K1:" << k1Vect[i]  << ";	"
+  		<< "Spread:" << result.Spread*100 <<"\%;	"
+  		<< "espNum:" << result.SpreadNumerator << ";	"
+  		<< "espDen:" << result.SpreadDenominator << ";	"
+  		<< "varNum:" << result.VarianceNumerator << ";	"
+  		<< "varDen:" << result.VarianceDenominator << ";	"
+  		<< std::endl << "ExpectedLossesByDate:";
+  		for (auto loss : result.ExpectedLossesByDate)
+  		{
+  			std::cout << loss << ";";
+  		}
+  		std::cout << endl << "VarianceLossesByDate:";
+  		for (auto var : result.VarianceLossesByDate)
+  		{
+  			std::cout << var << ";";
+  		}
+  		std::cout << endl << "DiscoutFactors:";
+  		for (auto discount : result.DiscoutFactors)
+  		{
+  			std::cout << discount << ";";
+  		}
   	}
   	outputFile.close();
 

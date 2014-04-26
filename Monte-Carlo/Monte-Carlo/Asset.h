@@ -26,6 +26,7 @@ public:
 		for (auto proba : defaultProba)
 		{
 			assert (proba >= 0 && proba <= 1);
+			
 			if (proba > 0 && proba < 1){
 				double quantile = distrib.inverse_cumulative(proba);
 				_defaultQuantiles.push_back(quantile);

@@ -25,10 +25,12 @@ Cdo::~Cdo()
 {
 }
 
-double Cdo::computeSpread(const std::vector<double>& expectedLosses, double rate) const
+
+MonteCarloResult Cdo::computeSpreadAndAnalysis(
+	const std::vector<double>& expectedLosses,  const std::vector<double>& varianceLosses, double rate) const
 {
 	assert(expectedLosses.size() == _spreadPaimentDates.size());
-	assert(std::is_sorted(expectedLosses.begin(), expectedLosses.end()));
+	assert(varianceLosses.size() == _spreadPaimentDates.size());
 
 	auto first = expectedLosses.begin();
 	auto end = expectedLosses.end();
@@ -36,17 +38,41 @@ double Cdo::computeSpread(const std::vector<double>& expectedLosses, double rate
 	double numerator = 0;
 	double denominator = 0;
 
+	double varianceNumerator = 0;
+	double varianceDenominator = 0;
+
+	std::vector<double> discountFactors;
+
 	int dateIndex = 0;
 	for (auto it = first; it < end; ++it, ++dateIndex)
 	{
-		double previousLost = it == first ? 0 : *(it - 1);
-		double previousDate = it == first ? 0 : _spreadPaimentDates[dateIndex - 1];
+		double previousLost = (it == first) ? 0 : *(it - 1);
+		double previousDate = (it == first) ? 0 : _spreadPaimentDates[dateIndex - 1];
 		double discountFactor = exp(-rate*_spreadPaimentDates[dateIndex]);
+		double nextDiscountFactor = (it == (end-1)) ? 0 : exp(-rate*_spreadPaimentDates[dateIndex+1]);
+		double deltaT = _spreadPaimentDates[dateIndex] - previousDate;
 
 		numerator += (*it - previousLost)*discountFactor;
-		denominator += (_spreadPaimentDates[dateIndex] - previousDate)*(1 - *it)*discountFactor;
+		denominator += deltaT*(1. - *it)*discountFactor;
+
+		varianceNumerator += (discountFactor-nextDiscountFactor)*(discountFactor-nextDiscountFactor)*varianceLosses[dateIndex];
+		varianceDenominator +=  discountFactor*discountFactor*deltaT*deltaT*varianceLosses[dateIndex];
+
+		discountFactors.push_back(discountFactor);
 	}
-	return numerator/denominator;
+
+	MonteCarloResult result;
+
+	result.Spread = numerator/denominator;
+	result.ExpectedLossesByDate = expectedLosses;
+	result.VarianceLossesByDate = varianceLosses;
+	result.SpreadNumerator = numerator;
+	result.SpreadDenominator = denominator;
+	result.VarianceNumerator = varianceNumerator;
+	result.VarianceDenominator = varianceDenominator;
+	result.DiscoutFactors = discountFactors;
+
+	return result;
 }
 
 

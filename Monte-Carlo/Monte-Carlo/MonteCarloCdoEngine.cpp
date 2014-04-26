@@ -15,47 +15,38 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 {
 	gaussian gaussianGen;
 
-	std::vector<double> lossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
+	std::vector<double> ExpectedlossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	std::vector<double> variancelossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	for (int iIter = 0; iIter < nbSimulations; iIter++)
 	{
 		int iDate = 0;
-		double defaultedPortion = 0;
 		for (auto date : cdo.getSpreadPaimentDates())
 		{
-			int iAsset = 0;
 			double m = generatorM();
+			double defaultedPortion = 0;
 			for (const Asset& asset : cdo.getAssets())
 			{
-					double x = generatorX();
-					if (asset.hasDefaulted(x, m, iDate))
-					{
-						defaultedPortion += asset.getWeight()*(1-asset.getRecoveryRate());
-					}
-				iAsset++;
+				double x = generatorX();
+				if (asset.hasDefaulted(x, m, iDate))
+				{
+					defaultedPortion += asset.getWeight()*(1-asset.getRecoveryRate());
+				}
 			}
 			double loss = cdo.computeLossInCdo(defaultedPortion);
-			lossInCDOByDate[iDate] += loss;
+			ExpectedlossInCDOByDate[iDate] += loss;
 			variancelossInCDOByDate[iDate] += loss*loss;
 			iDate++;
 		}
 
 	}
-	std::transform(lossInCDOByDate.begin(), lossInCDOByDate.end(), lossInCDOByDate.begin(),
+	std::transform(ExpectedlossInCDOByDate.begin(), ExpectedlossInCDOByDate.end(), ExpectedlossInCDOByDate.begin(),
 		std::bind1st(std::multiplies<double>(), ((double)1) / nbSimulations));
 
 	for (int i = 0 ; i < variancelossInCDOByDate.size() ; i++)
 	{
 		variancelossInCDOByDate[i] = variancelossInCDOByDate[i]/(nbSimulations-1) - 
-		nbSimulations*lossInCDOByDate[i]*lossInCDOByDate[i]/(nbSimulations-1);
+		nbSimulations*ExpectedlossInCDOByDate[i]*ExpectedlossInCDOByDate[i]/(nbSimulations-1);
 	}
 
-	double spread = cdo.computeSpread(lossInCDOByDate, rate);
-
-	MonteCarloResult result;
-	result.Spread = spread;
-	result.ExpectedLossByDate = lossInCDOByDate;
-	result.VarianceLossByDate = variancelossInCDOByDate;
-
-	return result;
+	return cdo.computeSpreadAndAnalysis(ExpectedlossInCDOByDate, variancelossInCDOByDate, rate);
 }
