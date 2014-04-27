@@ -8,6 +8,7 @@
 #include "GaussianDistribution.h"
 #include <iostream>
 #include <fstream> 
+#include "Kakutani.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ using namespace std;
 const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 {
 	int nbAssets = 125;
-	double lambda = 0.1;//default intensity
+	double lambda = 0.2;//default intensity
 	double recoveryRate = 0;
 	std::vector<double> spreadPaimentDates{ 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 };
 
@@ -38,16 +39,16 @@ const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 
 int main()
 {
-	int nbSimu = 5000;
+	int nbSimu = 1;
 	init_alea();
-	double rate = 0.01;
+	double rate = 0.02;
 
 	MonteCarloCdoEngine engine;
 
 
 	std::vector<double> k1Vect;
 	std::vector<MonteCarloResult> resultVect;
-	for (int i = 1; i < 2; i++)
+	for (int i = 2; i < 3; i++)
 	{
 		double k1 = i/(double)10;
 		double k2 = (i+1)/(double)10;
@@ -101,6 +102,20 @@ int main()
   		std::cout << endl;
   	}
   	outputFile.close();
+
+
+
+	Kakutani k(11);
+	double sum = 0;
+	for ( int i = 1 ; i < 10000 ; i++){
+		double random = k.Next();
+		sum+= random;
+
+		if ( (i%1000) != 0) continue;
+		std::cout << "random:" << random << std::endl;
+		std::cout << "mean:" << sum/i << std::endl;
+
+	}
 
 	return 0;
 }
