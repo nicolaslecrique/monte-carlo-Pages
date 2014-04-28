@@ -13,8 +13,6 @@ MonteCarloCdoEngine::~MonteCarloCdoEngine()
 const MonteCarloResult MonteCarloCdoEngine::Price(
 	const Cdo& cdo, int nbSimulations, double rate, var_alea<double>& generatorM, var_alea<double>& generatorX) const
 {
-	gaussian gaussianGen;
-
 	std::vector<double> ExpectedlossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	std::vector<double> variancelossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	for (int iIter = 0; iIter < nbSimulations; iIter++)

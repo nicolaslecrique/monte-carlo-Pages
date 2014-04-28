@@ -43,7 +43,7 @@ int main()
 {
 
 	init_alea();
-	fnGeneratePrimeList();
+	PrimeNumbersGenerator::fnGeneratePrimeList();
 
 
 	double rate = 0.02;

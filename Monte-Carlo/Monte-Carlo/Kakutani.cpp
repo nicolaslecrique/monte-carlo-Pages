@@ -1,4 +1,5 @@
 #include "Kakutani.h"
+#include "PrimeNumbersGenerator.h"
 #include <iostream>
 
 Kakutani::Kakutani(int base, bool halton, double left, double right) :
@@ -22,7 +23,7 @@ Kakutani::Kakutani(int base, bool halton, double left, double right) :
 }
 
 
-Kakutani::Kakutani(double left, double right, bool halton) : Kakutani(2,halton,left,right) {}
+Kakutani::Kakutani(double left, double right, bool halton) : Kakutani(PrimeNumbersGenerator::getNextPrimeNumber(),halton,left,right) {}
 
 
 Kakutani::~Kakutani()
