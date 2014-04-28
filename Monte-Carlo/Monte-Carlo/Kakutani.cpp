@@ -1,10 +1,11 @@
 #include "Kakutani.h"
 #include <iostream>
 
-Kakutani::Kakutani(int base) : _base(base)
+Kakutani::Kakutani(int base, bool halton, double left, double right) :
+ _base(base), _left(left), _size(right-left)
 {
 	double y = 1/(double)base;
-	double x = 1/5.;
+	double x = halton ? y : 1/5.;
 
 	for (int i = 0 ; i < 32 ; i++)
 	{
@@ -20,11 +21,15 @@ Kakutani::Kakutani(int base) : _base(base)
 	}
 }
 
+
+Kakutani::Kakutani(double left, double right, bool halton) : Kakutani(2,halton,left,right) {}
+
+
 Kakutani::~Kakutani()
 {
 }
 
-double Kakutani::Next()
+double Kakutani::operator()()
 {
 	int remaining = 0;
 	double result = 0;
@@ -38,6 +43,6 @@ double Kakutani::Next()
 		result += _current[i]/basePower;
 		basePower*=_base;
 	}
-	return result;
+	return _left + result*_size;
 }
 

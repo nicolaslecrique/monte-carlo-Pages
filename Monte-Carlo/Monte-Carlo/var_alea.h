@@ -19,6 +19,7 @@ protected:
 	T value;
 };
 
+
 struct uniform : public var_alea<double>
 {
 	uniform(double left = 0, double right = 1)
@@ -31,6 +32,7 @@ private:
 	double(*genrand)(void);
 };
 
+template <typename Tuniform>
 struct expo : public var_alea<double>
 {
 	expo(double lambda) : inv_lambda(1. / lambda), U(0, 1) {};
@@ -39,9 +41,10 @@ struct expo : public var_alea<double>
 	};
 private:
 	double inv_lambda;
-	uniform U;
+	Tuniform U;
 };
 
+template <typename Tuniform>
 struct gaussian : public var_alea<double>
 {
 	gaussian(double mean = 0, double std = 1)
@@ -62,9 +65,10 @@ struct gaussian : public var_alea<double>
 private:
 	double mean, std, U, V, R2, rac;
 	bool flag;
-	uniform unif;
+	Tuniform unif;
 };
 
+template <typename Tuniform>
 struct chi_deux : public var_alea<double>
 {
 	chi_deux(int n) : n(n), G(0, 1) {};
@@ -75,9 +79,10 @@ struct chi_deux : public var_alea<double>
 	};
 private:
 	int n;
-	gaussian G;
+	gaussian<Tuniform> G;
 };
 
+template <typename Tuniform>
 struct inverse_gaussian : public var_alea<double>
 {
 	inverse_gaussian(double lambda, double mu)
@@ -89,10 +94,11 @@ struct inverse_gaussian : public var_alea<double>
 	};
 private:
 	double lambda, mu;
-	chi_deux Y;
-	uniform U;
+	chi_deux<Tuniform> Y;
+	Tuniform U;
 };
 
+template <typename Tuniform>
 struct normal_inverse_gaussian : public var_alea<double>
 {
 	normal_inverse_gaussian(double alpha, double beta,
@@ -105,7 +111,7 @@ struct normal_inverse_gaussian : public var_alea<double>
 	};
 private:
 	double alpha, beta, mu, delta;
-	gaussian G;
-	inverse_gaussian Y;
+	gaussian<Tuniform> G;
+	inverse_gaussian<Tuniform> Y;
 };
 

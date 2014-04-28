@@ -9,6 +9,8 @@
 #include <iostream>
 #include <fstream> 
 #include "Kakutani.h"
+#include "Halton.h"
+#include "PrimeNumbersGenerator.h"
 
 using namespace std;
 
@@ -39,9 +41,13 @@ const Cdo BuildCdo(double k1, double k2, const Distribution& distribA)
 
 int main()
 {
-	int nbSimu = 1;
+
 	init_alea();
+	fnGeneratePrimeList();
+
+
 	double rate = 0.02;
+	int nbSimu = 1000;
 
 	MonteCarloCdoEngine engine;
 
@@ -57,8 +63,8 @@ int main()
 
 		const Cdo cdo = BuildCdo(k1,k2, distribA);
 
-		gaussian generatorM;
-		gaussian generatorX;
+		gaussian<Kakutani> generatorM;
+		gaussian<Kakutani> generatorX;
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		k1Vect.push_back(k1);
@@ -103,12 +109,12 @@ int main()
   	}
   	outputFile.close();
 
+return 0 ;
 
-
-	Kakutani k(11);
+	Kakutani k;
 	double sum = 0;
 	for ( int i = 1 ; i < 10000 ; i++){
-		double random = k.Next();
+		double random = k();
 		sum+= random;
 
 		if ( (i%1000) != 0) continue;
