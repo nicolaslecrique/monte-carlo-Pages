@@ -50,6 +50,11 @@ public:
 		return _coeffX;
 	}
 
+	double getCoeffM() const
+	{
+		return _coeffM;
+	}
+
 	double getWeight() const
 	{
 		return _weight;

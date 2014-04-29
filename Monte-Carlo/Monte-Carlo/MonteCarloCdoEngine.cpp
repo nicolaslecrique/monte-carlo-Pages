@@ -60,5 +60,9 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 	result.MaxSpread95 = 
 	(result.SpreadNumerator+numInterval975)/(result.SpreadDenominator-denomInterval975);
 
+	result.PricedCdo = &cdo;
+	result.NbSimulations = nbSimulations;
+	result.Rate = rate;
+
 	return result;
 }

@@ -27,6 +27,17 @@ public:
 		return _spreadPaimentDates;
 	}
 
+	const double getK1() const
+	{
+		return _k1;
+	}
+
+	const double getK2() const
+	{
+		return _k2;
+	}
+
+
 	MonteCarloResult computeSpreadAndAnalysis(const std::vector<double>& expectedLosses, const std::vector<double>& varianceLosses, double rate) const;
 	double computeLossInCdo(double lossInAllAssets) const;
 };
