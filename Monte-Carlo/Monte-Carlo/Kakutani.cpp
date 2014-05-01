@@ -1,6 +1,8 @@
 #include "Kakutani.h"
 #include "PrimeNumbersGenerator.h"
 #include <iostream>
+#include <cmath>
+#include <algorithm>
 
 Kakutani::Kakutani(int base, bool halton, double left, double right) :
  _base(base), _left(left), _size(right-left)
@@ -8,7 +10,10 @@ Kakutani::Kakutani(int base, bool halton, double left, double right) :
 	double y = 1/(double)base;
 	double x = halton ? y : 1/5.;
 
-	for (int i = 0 ; i < 32 ; i++)
+	//to maintain precision whatever the base is and optimise computation time 
+	int nbDigits = std::max(5,(int)(log(65536)/log(base)));
+
+	for (int i = 0 ; i < nbDigits ; i++)
 	{
 		x*=base;
 		int xFloor = (int)x;

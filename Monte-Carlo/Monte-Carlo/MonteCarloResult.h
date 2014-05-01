@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-class Cdo;
 
 struct MonteCarloResult
 {
@@ -17,11 +16,15 @@ struct MonteCarloResult
 	double MinSpread95;
 	double MaxSpread95;
 
-	const Cdo* PricedCdo;
 	int NbSimulations;
 	double Rate;
 
 	double DefaultIntensity;
+	double K1;
+	double K2;
+	int NbAssets;
+	double RecoveryRate;
+	double CorrelationFactor;
 
 	MonteCarloResult();
 	~MonteCarloResult();

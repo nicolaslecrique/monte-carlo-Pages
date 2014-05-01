@@ -2,3 +2,11 @@
 /build.log
 /monte-carlo
 /test.data
+/NbAssets-Gaussian-Pseudo.csv
+/NbSimu-Gaussian-Pseudo.csv
+/NbSimuZeoRecovery(For comparison with theoritical results)-Gaussian-Pseudo.csv
+/Tranche-Gaussian-Pseudo.csv
+/correlatedCoeff-Gaussian-Pseudo.csv
+/csvFile.zip
+/defaultIntensity-Gaussian-Pseudo.csv
+/recoveryRate-Gaussian-Pseudo.csv

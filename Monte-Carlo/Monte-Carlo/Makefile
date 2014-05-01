@@ -1,7 +1,7 @@
 CC=g++
-CFLAGS= -std=c++11 -I $(BOOST)
+CFLAGS=-std=c++11
 LDFLAGS=
-EXEC=monte-carlo-gcc.exe
+EXEC=monte-carlo
 SRC= $(wildcard *.cpp)
 OBJ= $(SRC:.cpp=.o)
 BINDIR=build-gcc

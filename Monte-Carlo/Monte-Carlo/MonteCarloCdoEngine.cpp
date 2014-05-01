@@ -11,7 +11,7 @@ MonteCarloCdoEngine::~MonteCarloCdoEngine()
 }
 
 const MonteCarloResult MonteCarloCdoEngine::Price(
-	const Cdo& cdo, int nbSimulations, double rate, var_alea<double>& generatorM, var_alea<double>& generatorX) const
+	const Cdo& cdo, int nbSimulations, double rate, var_alea<double>& generatorM, std::vector<std::shared_ptr<var_alea<double>>>& generatorXByAsset) const
 {
 	std::vector<double> ExpectedlossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	std::vector<double> variancelossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
@@ -22,13 +22,15 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 		{
 			double m = generatorM();
 			double defaultedPortion = 0;
+			int iAsset = 0;
 			for (const Asset& asset : cdo.getAssets())
 			{
-				double x = generatorX();
+				double x = (*generatorXByAsset[iAsset])();
 				if (asset.hasDefaulted(x, m, iDate))
 				{
 					defaultedPortion += asset.getWeight()*(1-asset.getRecoveryRate());
 				}
+				iAsset++;
 			}
 			double loss = cdo.computeLossInCdo(defaultedPortion);
 			ExpectedlossInCDOByDate[iDate] += loss;
@@ -60,7 +62,6 @@ const MonteCarloResult MonteCarloCdoEngine::Price(
 	result.MaxSpread95 = 
 	(result.SpreadNumerator+numInterval975)/(result.SpreadDenominator-denomInterval975);
 
-	result.PricedCdo = &cdo;
 	result.NbSimulations = nbSimulations;
 	result.Rate = rate;
 

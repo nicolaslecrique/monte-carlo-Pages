@@ -2,7 +2,7 @@
 
 #include "Kakutani.h"
 
-class Halton : private Kakutani
+class Halton : public Kakutani
 {
 public:
 	Halton(int base, double left, double right) : Kakutani(base, true, left, right) {}

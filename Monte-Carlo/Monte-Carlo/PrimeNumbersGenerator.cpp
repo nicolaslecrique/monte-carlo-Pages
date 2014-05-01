@@ -29,10 +29,10 @@ void PrimeNumbersGenerator::fnGeneratePrimeList()
             PrimeList[NumP++] = i;
 }
 
-int PrimeNumbersGenerator::getNextPrimeNumber()
+int PrimeNumbersGenerator::getNextPrimeNumber(bool reset)
 {
     static int currenIndex = 0;
-    if (currenIndex == MAX/9)
+    if (currenIndex == MAX/9 || reset)
     {
         currenIndex = 0;
     }

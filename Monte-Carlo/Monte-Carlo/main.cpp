@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <memory>
 #include "Cdo.h"
 #include "Asset.h"
 #include "MonteCarloCdoEngine.h"
@@ -37,6 +38,14 @@ const Cdo BuildCdo(double k1, double k2, const Distribution& distribA,
 	return Cdo(k1, k2, spreadPaimentDates, assets);
 }
 
+
+std::vector<std::shared_ptr<var_alea<double>>> GenerateGaussianGeneratorVector(int size)
+{
+	std::shared_ptr<var_alea<double>> gaussianPtr(new gaussian<uniform>());
+	return std::vector<std::shared_ptr<var_alea<double>>>(size, gaussianPtr);
+}
+
+
 void SaveFile(std::string fileName, std::vector<MonteCarloResult>& results, std::string distrib, std::string uniformGenerator )
 {
 	std::ofstream outputFile;
@@ -55,14 +64,14 @@ void SaveFile(std::string fileName, std::vector<MonteCarloResult>& results, std:
 		<< "------;"
 		<< result.NbSimulations << ";"
 		<< result.Rate << ";"
-		<< result.PricedCdo->getK1() << ";"
-		<< result.PricedCdo->getK2() << ";"
+		<< result.K1 << ";"
+		<< result.K2 << ";"
 		<< distrib << ";"
 		<< uniformGenerator << ";"
-		<< result.PricedCdo->getAssets().size() << ";"
+		<< result.NbAssets << ";"
 		<< result.DefaultIntensity << ";"
-		<< result.PricedCdo->getAssets()[0].getRecoveryRate() << ";"
-		<< result.PricedCdo->getAssets()[0].getCoeffM() << ";"
+		<< result.RecoveryRate << ";"
+		<< result.CorrelationFactor << ";"
 		<< "------;"
 		<< result.Spread << ";"
 		<< result.MinSpread95 << ";"
@@ -107,17 +116,166 @@ void TestByNbSimu()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
 
 	SaveFile("NbSimu-Gaussian-Pseudo.csv", resultVect, "gaussian", "pseudo-alea");
-
 }
+
+void TestKakutaniByNbSimu()
+{
+	double rate = 0.01;
+	double k1 = 0.1;
+	double k2 = 0.2;
+	int nbAssets = 125;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0.4;
+	double correlatedCoeff = 0.5;
+
+	MonteCarloCdoEngine engine;
+
+	std::vector<int> nbSimuVector;
+
+	int currentValue = 10;
+	while (currentValue <= 10)
+	{
+		nbSimuVector.push_back(currentValue);
+		currentValue*=2;
+	}
+
+	std::vector<MonteCarloResult> resultVect;
+	for (int nbSimu : nbSimuVector)
+	{
+		const GaussianDistribution distribA;
+
+		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
+
+		gaussian<Kakutani> generatorM;
+		std::vector<std::shared_ptr<var_alea<double>>> generatorX;
+		for ( int iAsset = 0 ; iAsset < nbAssets ; iAsset++ )
+		{
+			generatorX.push_back(std::shared_ptr<var_alea<double>>(new gaussian<Kakutani>()));
+		}
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
+		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
+
+		resultVect.push_back(result);
+	}
+
+	SaveFile("NbSimu-Gaussian-Kakutani.csv", resultVect, "gaussian", "Kakutani");
+}
+
+void TestKakutaniOneDimensionNbSimu()
+{
+	double rate = 0.01;
+	double k1 = 0.1;
+	double k2 = 0.2;
+	int nbAssets = 125;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0.4;
+	double correlatedCoeff = 0.5;
+
+	MonteCarloCdoEngine engine;
+
+	std::vector<int> nbSimuVector;
+
+	int currentValue = 10;
+	while (currentValue <= 10)
+	{
+		nbSimuVector.push_back(currentValue);
+		currentValue*=2;
+	}
+
+	std::vector<MonteCarloResult> resultVect;
+	for (int nbSimu : nbSimuVector)
+	{
+		const GaussianDistribution distribA;
+
+		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
+
+		gaussian<Kakutani> generatorM;
+		std::shared_ptr<var_alea<double>> gaussianPtr(new gaussian<Kakutani>());
+		std::vector<std::shared_ptr<var_alea<double>>> generatorX(nbAssets, gaussianPtr);
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
+		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
+
+		resultVect.push_back(result);
+	}
+
+	SaveFile("NbSimu-Gaussian-Kakutani-oneDimension.csv", resultVect, "gaussian", "Kakutani-oneDimension");
+}
+
+void TestHaltonByNbSimu()
+{
+	double rate = 0.01;
+	double k1 = 0.1;
+	double k2 = 0.2;
+	int nbAssets = 125;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0.4;
+	double correlatedCoeff = 0.5;
+
+	MonteCarloCdoEngine engine;
+
+	std::vector<int> nbSimuVector;
+
+	int currentValue = 10;
+	while (currentValue <= 10)
+	{
+		nbSimuVector.push_back(currentValue);
+		currentValue*=2;
+	}
+
+	std::vector<MonteCarloResult> resultVect;
+	for (int nbSimu : nbSimuVector)
+	{
+		const GaussianDistribution distribA;
+
+		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
+
+		gaussian<Halton> generatorM;
+		std::vector<std::shared_ptr<var_alea<double>>> generatorX;
+		for ( int iAsset = 0 ; iAsset < nbAssets ; iAsset++ )
+		{
+			generatorX.push_back(std::shared_ptr<var_alea<double>>(new gaussian<Halton>()));
+		}
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
+		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
+
+		resultVect.push_back(result);
+	}
+
+	SaveFile("NbSimu-Gaussian-Halton.csv", resultVect, "gaussian", "Halton");
+}
+
 
 
 void TestByNbSimuWithoutRecovery()
@@ -149,10 +307,15 @@ void TestByNbSimuWithoutRecovery()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -192,10 +355,15 @@ void TestByRecoveryRate()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -233,10 +401,15 @@ void TestByTranche()
 		const Cdo cdo = BuildCdo(k1,k1+0.1, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k1+0.1;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -274,10 +447,15 @@ void TestByNbAssets()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -315,10 +493,15 @@ void TestByDefaultIntensity()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -357,10 +540,15 @@ void TestBycorrelatedCoeff()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -398,10 +586,15 @@ void TestByInterestRate()
 		const Cdo cdo = BuildCdo(k1,k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
 
 		gaussian<uniform> generatorM;
-		gaussian<uniform> generatorX;
+		auto generatorX = GenerateGaussianGeneratorVector(nbAssets);
 
 		auto result = engine.Price(cdo, nbSimu, rate, generatorM, generatorX);
 		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
 
 		resultVect.push_back(result);
 	}
@@ -416,79 +609,18 @@ int main()
 	PrimeNumbersGenerator::fnGeneratePrimeList();
 
 	//TestByNbSimu();
+	//TestKakutaniByNbSimu();
+	PrimeNumbersGenerator::getNextPrimeNumber(true);
+	TestHaltonByNbSimu();
+	//PrimeNumbersGenerator::getNextPrimeNumber(true);
+	//TestKakutaniOneDimensionNbSimu();
 	//TestByRecoveryRate();
-	//TestByTranche();
-	//TestByNbAssets();
-	//TestByDefaultIntensity();
-	//TestBycorrelatedCoeff();
-	TestByNbSimuWithoutRecovery();
+	// TestByTranche();
+	// TestByNbAssets();
+	// TestByDefaultIntensity();
+	// TestBycorrelatedCoeff();
+	// TestByNbSimuWithoutRecovery();
 
-
-	return 0;
-
-	double rate = 0.01;
-	int nbSimu = 1000;
-
-	MonteCarloCdoEngine engine;
-
-
-	std::vector<double> k1Vect;
-	std::vector<MonteCarloResult> resultVect;
-
-
-
- 	std::ofstream outputFile;
-  	outputFile.open ("test.data");
-  	outputFile << "#k1 spread dummy" << endl;
-  	for(int i = 0; i < k1Vect.size(); i++)
-  	{
-
-  		auto result = resultVect[i];
-
-  		outputFile << k1Vect[i] << " " << resultVect[i].Spread << " " << cos(i) << endl;
-
-
-  		std::cout 
-  		<< "K1:" << k1Vect[i]  << ";	"
-  		<< "Spread:" << result.Spread*100 <<"\%;	"
-  		<< "espNum:" << result.SpreadNumerator << ";	"
-  		<< "espDen:" << result.SpreadDenominator << ";	"
-  		<< "varNum:" << result.VarianceNumerator << ";	"
-  		<< "varDen:" << result.VarianceDenominator << ";	"
-  		<< "MinSpread95%" << result.MinSpread95 << ";	"
-  		<< "MaxSpread95%" << result.MaxSpread95 << ";	"
-  		<< std::endl << "ExpectedLossesByDate:";
-  		for (auto loss : result.ExpectedLossesByDate)
-  		{
-  			std::cout << loss << ";";
-  		}
-  		std::cout << endl << "VarianceLossesByDate:";
-  		for (auto var : result.VarianceLossesByDate)
-  		{
-  			std::cout << var << ";";
-  		}
-  		std::cout << endl << "DiscoutFactors:";
-  		for (auto discount : result.DiscoutFactors)
-  		{
-  			std::cout << discount << ";";
-  		}
-  		std::cout << endl;
-  	}
-  	outputFile.close();
-
-return 0 ;
-
-	Kakutani k;
-	double sum = 0;
-	for ( int i = 1 ; i < 10000 ; i++){
-		double random = k();
-		sum+= random;
-
-		if ( (i%1000) != 0) continue;
-		std::cout << "random:" << random << std::endl;
-		std::cout << "mean:" << sum/i << std::endl;
-
-	}
 
 	return 0;
 }

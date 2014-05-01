@@ -4,6 +4,7 @@
 #include <vector>
 #include <assert.h>
 #include <limits>
+#include <memory>
 #include "Distribution.h"
 
 class Asset

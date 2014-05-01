@@ -34,7 +34,7 @@ public:
 /* Sieve of Eratosthenes: Generate all the prime numbers (< MAX) */
 static void fnGeneratePrimeList();
 
-static int getNextPrimeNumber();
+static int getNextPrimeNumber(bool reset = false);
 
 
 };
