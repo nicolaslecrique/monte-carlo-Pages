@@ -22,7 +22,8 @@
 #define MAX 1000000
 
 
-
+//generation of prime numbers wit Ersoshenes algo from internet modified for our needs
+//Used to generate dimensions in QMC simulations
 class PrimeNumbersGenerator
 {
 
@@ -33,7 +34,7 @@ static int NumP;
 public:
 /* Sieve of Eratosthenes: Generate all the prime numbers (< MAX) */
 static void fnGeneratePrimeList();
-
+//reset:reinit the counter at first prime number and return 2
 static int getNextPrimeNumber(bool reset = false);
 
 

@@ -4,6 +4,7 @@
 #include "Cdo.h"
 #include "var_alea.h"
 
+//class containing Cdo pricing method by MonteCarlo
 class MonteCarloCdoEngine
 {
 public:

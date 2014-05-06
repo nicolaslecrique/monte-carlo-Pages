@@ -11,7 +11,8 @@ MonteCarloCdoEngine::~MonteCarloCdoEngine()
 }
 
 const MonteCarloResult MonteCarloCdoEngine::Price(
-	const Cdo& cdo, int nbSimulations, double rate, var_alea<double>& generatorM, std::vector<std::shared_ptr<var_alea<double>>>& generatorXByAsset) const
+	const Cdo& cdo, int nbSimulations, double rate,
+	 var_alea<double>& generatorM, std::vector<std::shared_ptr<var_alea<double>>>& generatorXByAsset) const
 {
 	std::vector<double> ExpectedlossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);
 	std::vector<double> variancelossInCDOByDate(cdo.getSpreadPaimentDates().size(),0);

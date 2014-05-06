@@ -2,6 +2,7 @@
 
 #include <vector>
 
+//result of a montecarlo simulation : spread, confidence interval, used parameters and intermediary results
 struct MonteCarloResult
 {
 	double Spread;

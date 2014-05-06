@@ -48,12 +48,12 @@ template <typename Tuniform>
 struct gaussian : public var_alea<double>
 {
 	gaussian(double mean = 0, double std = 1)
-	: mean(mean), std(std), flag(true), unif(-1, 1) {};
+	: mean(mean), std(std), flag(true), unifU(-1, 1), unifV(-1, 1) {};
 	double operator()() {
 		flag = !flag;
 		if (!flag) {
 			do {
-				U = unif(); V = unif();
+				U = unifU(); V = unifV();
 				R2 = U*U + V*V;
 			} while (R2 > 1);
 			rac = sqrt(-2 * log(R2) / R2);
@@ -65,7 +65,8 @@ struct gaussian : public var_alea<double>
 private:
 	double mean, std, U, V, R2, rac;
 	bool flag;
-	Tuniform unif;
+	Tuniform unifU;
+	Tuniform unifV;
 };
 
 template <typename Tuniform>

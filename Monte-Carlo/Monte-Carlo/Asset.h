@@ -1,44 +1,27 @@
 #pragma once
 
-#include <cmath>
 #include <vector>
-#include <assert.h>
-#include <limits>
-#include <memory>
 #include "Distribution.h"
 
+/*
+contains data specific to an asset
+*/
 class Asset
 {
+	//part of the asset correlated to the market
 	const double _coeffM;
+	//part of the asset independant of the market
 	const double _coeffX;
+	//weight of this asset in the CDO
 	const double _weight;
+	//portion of the asset recovered if asset default
 	const double _recoveryRate;
+	//default quantiles by coupon date
 	std::vector<double> _defaultQuantiles;
 
 public:
 
-	Asset(double coeffM, double weight, double recoveryRate, const std::vector<double>& defaultProba, const Distribution& distrib) :
-		_coeffM(coeffM), _weight(weight), _recoveryRate(recoveryRate), _coeffX(sqrt(1 - pow(coeffM, 2)))
-	{
-		assert(std::is_sorted(defaultProba.begin(), defaultProba.end()));
-		assert(_recoveryRate >= 0 && _recoveryRate <= 1);
-		assert(_coeffM >= 0 && _coeffM <= 1);
-
-		for (auto proba : defaultProba)
-		{
-			assert (proba >= 0 && proba <= 1);
-			
-			if (proba > 0 && proba < 1){
-				double quantile = distrib.inverse_cumulative(proba);
-				_defaultQuantiles.push_back(quantile);
-				//
-			} else if (proba == 0) {
-				_defaultQuantiles.push_back(std::numeric_limits<double>::lowest());
-			} else {
-				_defaultQuantiles.push_back(std::numeric_limits<double>::max());
-			}
-		}
-	}
+	Asset(double coeffM, double weight, double recoveryRate, const std::vector<double>& defaultProba, const Distribution& distrib);
 
 	bool hasDefaulted(double X,double M, int date) const
 	{
