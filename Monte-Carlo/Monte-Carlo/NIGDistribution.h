@@ -3,7 +3,7 @@
 //usefull with windows compiler for pi
 #define _USE_MATH_DEFINES
 
-#include <cmath>
+#include <math.h>
 #include <boost/math/special_functions/bessel.hpp>
 #include <boost/math/tools/minima.hpp>
 #include "Distribution.h"
@@ -35,7 +35,7 @@ class NIGDistribution : public Distribution
 
 public:
 	NIGDistribution(double alpha, double beta, double mu, double delta)
-	: _cumulative(-10, 10, 0.01, densityFct(alpha, beta, mu, delta))
+	: _cumulative(-20, 20, 0.01, densityFct(alpha, beta, mu, delta))
 	{
 	}
 
@@ -55,7 +55,7 @@ public:
 			}
 		};
 
-    	std::pair<double, double> result = boost::math::tools::brent_find_minima(MinCumulative(proba, _cumulative), -10.0, 10.0, 20);
+    	std::pair<double, double> result = boost::math::tools::brent_find_minima(MinCumulative(proba, _cumulative), -20.0, 20.0, 15);
     	return result.first;
 
 	}

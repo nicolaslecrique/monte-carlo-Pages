@@ -50,7 +50,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mingw32-make</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -70,10 +71,12 @@
   <ItemGroup>
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Cdo.cpp" />
+    <ClCompile Include="Kakutani.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MonteCarloCdoEngine.cpp" />
     <ClCompile Include="MonteCarloResult.cpp" />
     <ClCompile Include="mt19937.cpp" />
+    <ClCompile Include="PrimeNumbersGenerator.cpp" />
     <ClCompile Include="var_alea.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +85,20 @@
   <ItemGroup>
     <ClInclude Include="Asset.h" />
     <ClInclude Include="Cdo.h" />
+    <ClInclude Include="Distribution.h" />
+    <ClInclude Include="GaussianDistribution.h" />
+    <ClInclude Include="Halton.h" />
+    <ClInclude Include="Kakutani.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="MonteCarloCdoEngine.h" />
     <ClInclude Include="MonteCarloResult.h" />
     <ClInclude Include="mt19937.h" />
+    <ClInclude Include="NIGDistribution.h" />
+    <ClInclude Include="PrimeNumbersGenerator.h" />
+    <ClInclude Include="SimpsonIntegral.h" />
+    <ClInclude Include="TestNIG.h" />
+    <ClInclude Include="TestsPricing.h" />
+    <ClInclude Include="TestsQMC.h" />
     <ClInclude Include="var_alea.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

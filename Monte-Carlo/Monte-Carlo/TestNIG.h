@@ -36,11 +36,11 @@ void TestNIGInverseCumulative()
 	delta = 1;
 	NIGDistribution nig1(alpha, beta, mu, delta);
 
-	double inv1 = nig1.inverse_cumulative(0.000001);
-	outputFile << "proba->0;" << "-infinity;" << inv1 << endl;
+	double inv1 = nig1.inverse_cumulative(0);
+	outputFile << "proba->0;" << "-20;" << inv1 << endl;
 
-	inv1 = nig1.inverse_cumulative(0.999999);
-	outputFile << "proba->1;" << "+infinity;" << inv1 << endl;
+	inv1 = nig1.inverse_cumulative(1);
+	outputFile << "proba->1;" << "+20;" << inv1 << endl;
 
 	//Test 2 : when beta=0 distribution is symetric centered on mu => inverse(0.5) should be = mu
 	beta = 0;
@@ -52,7 +52,7 @@ void TestNIGInverseCumulative()
 	//Test 3 : when beta=0, delta=sigma2*alpha, alpha->infinity, law is the same as normal(mu, sigma2)
 	mu = 0;
 	beta = 0;
-	alpha = 100000;
+	alpha = 10;
 	double sigma = 1;
 	delta = sigma*sigma*alpha;
 	GaussianDistribution gauss;

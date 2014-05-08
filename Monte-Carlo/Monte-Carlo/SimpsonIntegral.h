@@ -43,7 +43,8 @@ public:
 		{
 			return _result[_result.size()-1];
 		}
+		//linear interpolation
 		int beforeIndex = (int)index;
-		return _result[beforeIndex]*(1-x+beforeIndex)+_result[beforeIndex+1]*(x-beforeIndex);
+		return _result[beforeIndex]*(1-index+beforeIndex)+_result[beforeIndex+1]*(index-beforeIndex);
 	}
 };
