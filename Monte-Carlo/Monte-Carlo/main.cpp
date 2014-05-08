@@ -1,5 +1,6 @@
 #include "TestsPricing.h"
 #include "TestsQMC.h"
+#include "TestNIG.h"
 
 int main()
 {
@@ -20,6 +21,7 @@ int main()
 	// TestBycorrelatedCoeff();
 	// TestByNbSimuWithoutRecovery();
 	//TestQmcSequences();
+	TestNIGInverseCumulative();
 
 
 

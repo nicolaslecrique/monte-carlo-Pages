@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <memory>
@@ -100,7 +102,7 @@ void TestByNbSimu()
 	std::vector<int> nbSimuVector;
 
 	int currentValue = 100;
-	while (currentValue < 1000000)
+	while (currentValue < 000)
 	{
 		nbSimuVector.push_back(currentValue);
 		currentValue*=2;
