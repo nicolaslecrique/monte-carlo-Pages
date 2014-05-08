@@ -2,7 +2,7 @@
 
 
 #include "Distribution.h"
-
+#include <boost/math/distributions/normal.hpp>
 
 class GaussianDistribution : public Distribution
 {

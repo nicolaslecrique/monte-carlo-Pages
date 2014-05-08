@@ -27,6 +27,9 @@ struct MonteCarloResult
 	double RecoveryRate;
 	double CorrelationFactor;
 
+	double alphaNIG;
+	double betaNIG;
+
 	MonteCarloResult();
 	~MonteCarloResult();
 };

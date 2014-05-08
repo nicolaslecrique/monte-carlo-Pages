@@ -3,6 +3,7 @@
 #include "MonteCarloResult.h"
 #include "Cdo.h"
 #include "var_alea.h"
+#include <memory>
 
 //class containing Cdo pricing method by MonteCarlo
 class MonteCarloCdoEngine

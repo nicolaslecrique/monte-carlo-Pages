@@ -1,8 +1,5 @@
 #pragma once
 
-#include <boost/math/distributions/normal.hpp>
-
-
 class Distribution
 {
 

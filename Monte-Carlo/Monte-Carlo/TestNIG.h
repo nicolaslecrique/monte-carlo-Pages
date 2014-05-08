@@ -1,18 +1,12 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <memory>
-#include "Cdo.h"
-#include "Asset.h"
-#include "MonteCarloCdoEngine.h"
-#include "var_alea.h"
 #include "NIGDistribution.h"
 #include "GaussianDistribution.h"
 #include <iostream>
 #include <fstream> 
-#include "Kakutani.h"
-#include "Halton.h"
-#include "PrimeNumbersGenerator.h"
-#include "TestsPricing.h"
 
 using namespace std;
 
@@ -52,7 +46,7 @@ void TestNIGInverseCumulative()
 	//Test 3 : when beta=0, delta=sigma2*alpha, alpha->infinity, law is the same as normal(mu, sigma2)
 	mu = 0;
 	beta = 0;
-	alpha = 10;
+	alpha = 10;//alpha cannot ne greater because we do exp(alpha^2) in density computaion
 	double sigma = 1;
 	delta = sigma*sigma*alpha;
 	GaussianDistribution gauss;

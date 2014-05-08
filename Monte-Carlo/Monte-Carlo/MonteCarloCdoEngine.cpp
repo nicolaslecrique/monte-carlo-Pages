@@ -1,5 +1,7 @@
 #include "MonteCarloCdoEngine.h"
 
+#include <algorithm>
+#include <functional>
 
 MonteCarloCdoEngine::MonteCarloCdoEngine()
 {

@@ -21,7 +21,8 @@ int main()
 	// TestBycorrelatedCoeff();
 	// TestByNbSimuWithoutRecovery();
 	//TestQmcSequences();
-	TestNIGInverseCumulative();
+	//TestNIGInverseCumulative();
+	TestNIGByAlpha();
 
 
 

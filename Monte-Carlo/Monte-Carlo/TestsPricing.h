@@ -51,8 +51,8 @@ void SaveFile(std::string fileName, std::vector<MonteCarloResult>& results, std:
 	std::ofstream outputFile;
   	outputFile.open (fileName);
 
-	outputFile << "---Parameters----;NbSimu;rate;k1;k2;distribution;UniformGenerator;nbAsset" << 
-	";defaultIntensity;recoveryRate;correlatedCoeff;---Results---;" <<
+	outputFile << "---Parameters----;NbSimu;rate;k1;k2;distribution;UniformGenerator;nbAsset" <<
+		";defaultIntensity;recoveryRate;correlatedCoeff;alphaNIG;betaNIG;---Results---;" <<
 	"spread;MinSpread95;MaxSpread95;---IntermediaryResults---;" <<
 	"espNum;espDen;varNum;varDen;" 
 	<< endl;
@@ -72,6 +72,8 @@ void SaveFile(std::string fileName, std::vector<MonteCarloResult>& results, std:
 		<< result.DefaultIntensity << ";"
 		<< result.RecoveryRate << ";"
 		<< result.CorrelationFactor << ";"
+		<< result.alphaNIG << ";"
+		<< result.betaNIG << ";"
 		<< "------;"
 		<< result.Spread << ";"
 		<< result.MinSpread95 << ";"
@@ -131,6 +133,80 @@ void TestByNbSimu()
 
 	SaveFile("NbSimu-Gaussian-Pseudo.csv", resultVect, "gaussian", "pseudo-alea");
 }
+
+void TestNIGByAlpha()
+{
+	double rate = 0.01;
+	double k1 = 0.1;
+	double k2 = 0.2;
+	int nbAssets = 125;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0.4;
+	double correlatedCoeff = 0.5;
+	double nbSimu = 10000;
+	double beta = 0;
+
+	MonteCarloCdoEngine engine;
+
+	std::vector<double> alphaVect;
+
+	double currentValue = 0.5;
+	while (currentValue < 10)
+	{
+		alphaVect.push_back(currentValue);
+		currentValue += 0.5;
+	}
+
+	std::vector<MonteCarloResult> resultVect;
+	for (double alpha : alphaVect)
+	{
+		double gamma = sqrt(alpha*alpha-beta*beta);
+		double alphaM = alpha;
+		double betaM = beta;
+		double muM = -beta*gamma*gamma / (alpha*alpha);
+		double deltaM = gamma*gamma*gamma / (alpha*alpha);
+
+		double alphaA = alphaM / correlatedCoeff;
+		double betaA = betaM / correlatedCoeff;
+		double muA = muM / correlatedCoeff;
+		double deltaA = deltaM / correlatedCoeff;
+
+		double decorrelCoeff = sqrt(1 - correlatedCoeff*correlatedCoeff);
+		double alphaX = alphaA*decorrelCoeff;
+		double betaX = betaA*decorrelCoeff;
+		double muX = muA*decorrelCoeff;
+		double deltaX = deltaA*decorrelCoeff;
+
+		const NIGDistribution distribA(alphaA,betaA,muA,deltaA);
+
+		const Cdo cdo = BuildCdo(k1, k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
+
+		normal_inverse_gaussian<uniform> generatorM(alphaM, betaM, muM, deltaM);
+
+		std::shared_ptr<var_alea<double>> genXPtr(new normal_inverse_gaussian<uniform>(alphaX, betaX, muX, deltaX));
+		std::vector<std::shared_ptr<var_alea<double>>> genXVect(nbAssets, genXPtr);
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, genXVect);
+		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
+		result.alphaNIG = alpha;
+		result.betaNIG = beta;
+		resultVect.push_back(result);
+	}
+
+	SaveFile("NbSimu-NIG-ByAlpha-Pseudo.csv", resultVect, "NIG", "pseudo-alea");
+}
+
+
+
+
+
+
+
 
 void TestKakutaniByNbSimu()
 {

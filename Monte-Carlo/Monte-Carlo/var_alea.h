@@ -108,7 +108,7 @@ struct normal_inverse_gaussian : public var_alea<double>
 	Y(delta / sqrt(alpha*alpha - beta*beta), delta*delta)  {};
 	double operator()() {
 		double y_ = Y();
-		return value = mu + beta*y_ * sqrt(y_) * G();
+		return value = mu + beta*y_ + sqrt(y_) * G();
 	};
 private:
 	double alpha, beta, mu, delta;
