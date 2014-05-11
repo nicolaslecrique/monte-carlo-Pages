@@ -203,6 +203,73 @@ void TestNIGByAlpha()
 
 
 
+void TestNIGByBeta()
+{
+	double rate = 0.01;
+	double k1 = 0.1;
+	double k2 = 0.2;
+	int nbAssets = 125;
+	double lambda = 0.1;//default intensity
+	double recoveryRate = 0.4;
+	double correlatedCoeff = 0.5;
+	double nbSimu = 10000;
+	double alpha = 1;
+
+	MonteCarloCdoEngine engine;
+
+	std::vector<double> betaVect;
+
+	double currentValue = -0.9;
+	while (currentValue < 0.91)
+	{
+		betaVect.push_back(currentValue);
+		currentValue += 0.1;
+	}
+
+	std::vector<MonteCarloResult> resultVect;
+	for (double beta : betaVect)
+	{
+		double gamma = sqrt(alpha*alpha - beta*beta);
+		double alphaM = alpha;
+		double betaM = beta;
+		double muM = -beta*gamma*gamma / (alpha*alpha);
+		double deltaM = gamma*gamma*gamma / (alpha*alpha);
+
+		double alphaA = alphaM / correlatedCoeff;
+		double betaA = betaM / correlatedCoeff;
+		double muA = muM / correlatedCoeff;
+		double deltaA = deltaM / correlatedCoeff;
+
+		double decorrelCoeff = sqrt(1 - correlatedCoeff*correlatedCoeff);
+		double alphaX = alphaA*decorrelCoeff;
+		double betaX = betaA*decorrelCoeff;
+		double muX = muA*decorrelCoeff;
+		double deltaX = deltaA*decorrelCoeff;
+
+		const NIGDistribution distribA(alphaA, betaA, muA, deltaA);
+
+		const Cdo cdo = BuildCdo(k1, k2, distribA, nbAssets, lambda, recoveryRate, correlatedCoeff);
+
+		normal_inverse_gaussian<uniform> generatorM(alphaM, betaM, muM, deltaM);
+
+		std::shared_ptr<var_alea<double>> genXPtr(new normal_inverse_gaussian<uniform>(alphaX, betaX, muX, deltaX));
+		std::vector<std::shared_ptr<var_alea<double>>> genXVect(nbAssets, genXPtr);
+
+		auto result = engine.Price(cdo, nbSimu, rate, generatorM, genXVect);
+		result.DefaultIntensity = lambda;
+		result.K1 = k1;
+		result.K2 = k2;
+		result.NbAssets = nbAssets;
+		result.RecoveryRate = recoveryRate;
+		result.CorrelationFactor = correlatedCoeff;
+		result.alphaNIG = alpha;
+		result.betaNIG = beta;
+		resultVect.push_back(result);
+	}
+
+	SaveFile("NbSimu-NIG-ByBeta-Pseudo.csv", resultVect, "NIG", "pseudo-alea");
+}
+
 
 
 

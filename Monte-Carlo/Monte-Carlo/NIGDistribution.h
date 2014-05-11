@@ -12,6 +12,7 @@
 
 class NIGDistribution : public Distribution
 {
+	//internal functor computing density of NIG nidstribution
 	class densityFct : public std::unary_function<double,double>
 	{
 		double _alpha;
@@ -30,8 +31,8 @@ class NIGDistribution : public Distribution
 		}
 	};
 
+	//Construction of the object compute the intergral of the density function
 	const SimpsonIntegral<densityFct> _cumulative;
-
 
 public:
 	NIGDistribution(double alpha, double beta, double mu, double delta)
@@ -41,6 +42,7 @@ public:
 
 	double inverse_cumulative(double proba) const
 	{
+		//functor computing spread between searched value and current valu
 		struct MinCumulative
 		{
 			double _proba;
@@ -55,6 +57,8 @@ public:
 			}
 		};
 
+		//we look for the value between -20 and +20, density is 0 outside this range for reasonable parameters
+		//We use brent algorithm to find root of the function
     	std::pair<double, double> result = boost::math::tools::brent_find_minima(MinCumulative(proba, _cumulative), -20.0, 20.0, 15);
     	return result.first;
 

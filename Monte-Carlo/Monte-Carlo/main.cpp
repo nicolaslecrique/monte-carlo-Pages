@@ -22,7 +22,8 @@ int main()
 	// TestByNbSimuWithoutRecovery();
 	//TestQmcSequences();
 	//TestNIGInverseCumulative();
-	TestNIGByAlpha();
+	//TestNIGByAlpha();
+	TestNIGByBeta();
 
 
 

@@ -1,7 +1,8 @@
 #include <vector>
 #include <functional>
 
-
+//Compute the integral of a smooth function by simpson algorithm
+//caches values at discretisation points then make a linear interpolation between
 template<typename F>
 class SimpsonIntegral
 {
@@ -31,6 +32,7 @@ public:
 		}
 	}
 
+	//make linear interpolation between pre-computed points
 	double operator()(const double x) const
 	{
 		//compute indexes around from x

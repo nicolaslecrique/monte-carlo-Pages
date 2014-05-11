@@ -23,7 +23,8 @@ void TestNIGInverseCumulative()
 	double mu;
 	double delta;
 
-	//Test 1 : inverse sould go to minus/plus infinity when proba go to 0/1
+	//Test 1 : inverse sould go to minus/plus infinity when proba go to 0/1.
+	//The expected value is +/-20 because it's the chosen scope of integration (probability is extremely close to 0 outside of this range)
 	alpha = 1;
 	beta = 1;
 	mu = 1;
