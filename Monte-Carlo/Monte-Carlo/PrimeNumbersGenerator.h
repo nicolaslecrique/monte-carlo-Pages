@@ -2,7 +2,7 @@
 
 
 
-/************* Sieve of Eratoshenes for Prime Number Problem ***************
+/************* Sieve of Ératosthène for Prime Number Problem ***************
 *                                                                          *
 * Author: Peter Lee (peterlee.com.cn <at> gmail.com)                       *
 *   Date: 2008-03-02                                                       *
@@ -22,7 +22,7 @@
 #define MAX 1000000
 
 
-//generation of prime numbers wit Ersoshenes algo from internet modified for our needs
+//generation of prime numbers wit Ératosthène algo from internet modified for our needs
 //Used to generate dimensions in QMC simulations
 class PrimeNumbersGenerator
 {

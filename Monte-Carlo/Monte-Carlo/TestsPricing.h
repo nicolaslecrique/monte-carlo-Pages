@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <memory>
+#include <boost/lexical_cast.hpp>
 #include "Cdo.h"
 #include "Asset.h"
 #include "MonteCarloCdoEngine.h"
@@ -134,27 +135,29 @@ void TestByNbSimu()
 	SaveFile("NbSimu-Gaussian-Pseudo.csv", resultVect, "gaussian", "pseudo-alea");
 }
 
-void TestNIGByAlpha()
+
+
+void TestNIGByAlpha(double k1)
 {
 	double rate = 0.01;
-	double k1 = 0.1;
-	double k2 = 0.2;
+	//double k1 = 0.1;
+	double k2 = k1+0.1;
 	int nbAssets = 125;
 	double lambda = 0.1;//default intensity
 	double recoveryRate = 0.4;
 	double correlatedCoeff = 0.5;
-	double nbSimu = 10000;
+	double nbSimu = 2000;
 	double beta = 0;
 
 	MonteCarloCdoEngine engine;
 
 	std::vector<double> alphaVect;
 
-	double currentValue = 0.5;
-	while (currentValue < 10)
+	double currentValue = 0.2;
+	while (currentValue < 4)
 	{
 		alphaVect.push_back(currentValue);
-		currentValue += 0.5;
+		currentValue += 0.2;
 	}
 
 	std::vector<MonteCarloResult> resultVect;
@@ -197,13 +200,12 @@ void TestNIGByAlpha()
 		result.betaNIG = beta;
 		resultVect.push_back(result);
 	}
-
-	SaveFile("NbSimu-NIG-ByAlpha-Pseudo.csv", resultVect, "NIG", "pseudo-alea");
+	std::string name = "alpha-tranche-Gaussian-Pseudo-" + boost::lexical_cast<std::string>(k1)+".csv";
+	SaveFile(name, resultVect, "NIG", "pseudo-alea");
 }
 
 
-
-void TestNIGByBeta()
+void TestNIGByBeta(double alpha)
 {
 	double rate = 0.01;
 	double k1 = 0.1;
@@ -212,15 +214,15 @@ void TestNIGByBeta()
 	double lambda = 0.1;//default intensity
 	double recoveryRate = 0.4;
 	double correlatedCoeff = 0.5;
-	double nbSimu = 10000;
-	double alpha = 1;
+	double nbSimu = 2000;
+	//double alpha = 1;
 
 	MonteCarloCdoEngine engine;
 
 	std::vector<double> betaVect;
 
-	double currentValue = -0.9;
-	while (currentValue < 0.91)
+	double currentValue = -alpha;
+	while (currentValue < alpha)
 	{
 		betaVect.push_back(currentValue);
 		currentValue += 0.1;
@@ -267,11 +269,36 @@ void TestNIGByBeta()
 		resultVect.push_back(result);
 	}
 
-	SaveFile("NbSimu-NIG-ByBeta-Pseudo.csv", resultVect, "NIG", "pseudo-alea");
+	std::string name = "alpha-beta-NIG-Pseudo-" + boost::lexical_cast<std::string>(alpha)+".csv";
+	SaveFile(name, resultVect, "NIG", "pseudo-alea");
 }
 
 
 
+
+void TestNIGByAlphaAndTranches()
+{
+	TestNIGByAlpha(0);
+	TestNIGByAlpha(0.1);
+	TestNIGByAlpha(0.2);
+	TestNIGByAlpha(0.3);
+	TestNIGByAlpha(0.4);
+	TestNIGByAlpha(0.5);
+}
+
+
+
+void TestNIGByBetaAlpha()
+{
+	TestNIGByBeta(0.1);
+	TestNIGByBeta(0.2);
+	TestNIGByBeta(0.3);
+	TestNIGByBeta(0.5);
+	TestNIGByBeta(1);
+	TestNIGByBeta(2);
+	TestNIGByBeta(3);
+	TestNIGByBeta(4);
+}
 
 
 
@@ -653,15 +680,17 @@ void TestByDefaultIntensity()
 }
 
 
-void TestBycorrelatedCoeff()
+
+
+void TestBycorrelatedCoeff(double k1)
 {
 	double rate = 0.01;
-	double k1 = 0.1;
-	double k2 = 0.2;
+	//double k1 = 0.1;
+	double k2 = k1 + 0.1;
 	int nbAssets = 125;
 	double lambda = 0.1;//default intensity
 	//double correlatedCoeff = 0.5;
-	int nbSimu = 20000;
+	int nbSimu = 1000;
 	double recoveryRate = 0.4;
 
 	MonteCarloCdoEngine engine;
@@ -695,8 +724,19 @@ void TestBycorrelatedCoeff()
 
 		resultVect.push_back(result);
 	}
+	std::string name = "correlatedCoeff-tranche-Gaussian-Pseudo-" + boost::lexical_cast<std::string>(k1) + ".csv";
+	SaveFile(name, resultVect, "gaussian", "pseudo-alea");
+}
 
-	SaveFile("correlatedCoeff-Gaussian-Pseudo.csv", resultVect, "gaussian", "pseudo-alea");
+void TestBycorrelatedCoeffAndTranche()
+{
+	TestBycorrelatedCoeff(0);
+	TestBycorrelatedCoeff(0.1);
+	TestBycorrelatedCoeff(0.2);
+	TestBycorrelatedCoeff(0.3);
+	TestBycorrelatedCoeff(0.4);
+	TestBycorrelatedCoeff(0.5);
+	TestBycorrelatedCoeff(0.6);
 }
 
 void TestByInterestRate()
@@ -707,7 +747,7 @@ void TestByInterestRate()
 	int nbAssets = 125;
 	double lambda = 0.1;//default intensity
 	double correlatedCoeff = 0.5;
-	int nbSimu = 20000;
+	int nbSimu = 2000;
 	double recoveryRate = 0.4;
 
 	MonteCarloCdoEngine engine;

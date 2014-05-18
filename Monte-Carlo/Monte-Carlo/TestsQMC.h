@@ -12,6 +12,7 @@
 #include "Kakutani.h"
 #include "Halton.h"
 #include "PrimeNumbersGenerator.h"
+#include <boost/numeric/ublas/matrix.hpp>
 
 using namespace std;
 
@@ -96,5 +97,61 @@ void TestQmcSequences()
 
   	outputFile.close();
 
+
+};
+
+void TestKakutaniCorrelationDim()
+{
+	int nbDim = 100;
+	boost::numeric::ublas::matrix<double> corr(nbDim, nbDim);
+
+	PrimeNumbersGenerator::getNextPrimeNumber(true);
+	int nbSimu = 10000;
+
+	vector<shared_ptr<Kakutani>> generators;
+	for (int i = 0; i < nbDim; i++)
+	{
+		generators.push_back(std::shared_ptr<Kakutani>(new Kakutani()));
+	}
+
+	for (int i = 0; i < nbDim; i++){
+		for (int j = 0; j < nbDim; j++){
+			corr(i, j) = 0;
+		}
+	}
+
+	std::vector<double> generatedValue(nbDim);
+
+	for (int simu = 0; simu < nbSimu; simu++)
+	{
+		for (int dim = 0; dim < nbDim; dim++)
+		{
+			generatedValue[dim] = (*generators[dim])();
+		}
+		
+		for (int i = 0; i < nbDim; i++){
+			for (int j = 0; j < nbDim; j++){
+				corr(i, j) = corr(i, j) + (generatedValue[i] - 0.5)*(generatedValue[j] - 0.5);
+			}
+		}
+	}
+
+	for (int i = 0; i < nbDim; i++){
+		for (int j = 0; j < nbDim; j++){
+			corr(i, j) = 12*corr(i, j)/(nbSimu-1);
+		}
+	}
+
+	std::ofstream outputFile;
+	outputFile.open("correl-kakutani.csv");
+
+	for (int i = 0; i < nbDim; i++){
+		for (int j = 0; j < nbDim; j++){
+			outputFile << corr(i, j) << ";";
+		}
+		outputFile << endl;
+	}
+
+	outputFile.close();
 
 }
